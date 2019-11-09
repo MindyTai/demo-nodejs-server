@@ -34,3 +34,25 @@ jobs:
       - run:
           name: Build
           command: npm run build
+  deploy:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - run: |
+          echo $GCP_KEY > gcloud-service-key.json
+          gcloud auth activate-service-account --key-file=gcloud-service-key.json
+          gcloud --quiet config set project ${GCP_PROJECT_ID}
+          gcloud --quiet config set compute/zone ${GCP_REGION}
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
