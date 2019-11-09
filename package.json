@@ -1,0 +1,36 @@
+{
+  "name": "demo-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/node": "^7.7.0",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^22.21.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "express": "^4.17.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2"
+  },
+  "scripts": {
+    "start": "yarn run build && node build/server.js",
+    "test": "jest",
+    "build": "rm -rf build && babel src -d build --copy-files",
+    "lint": "eslint . --fix",
+    "dev": "nodemon"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.7.1",
+    "babel-eslint": "^10.0.3",
+    "husky": "^3.0.9",
+    "lint-staged": "^9.4.2",
+    "nodemon": "^1.19.4",
+    "supertest": "^4.0.2"
+  }
+}
