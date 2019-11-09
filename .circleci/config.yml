@@ -9,7 +9,7 @@ jobs:
           name: Check Node.js version
           command: node -v
       - run:
-          name: Install yarn to latest version
+          name: Install yarn
           command: 'curl -o- -L https://yarnpkg.com/install.sh | bash'
       - restore_cache:
           name: Restore dependencies from cache
@@ -34,16 +34,32 @@ jobs:
       - run:
           name: Build
           command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+            - package.json
+            - yarn.lock
+            - app.yaml
   deploy:
     docker:
       - image: google/cloud-sdk
     steps:
-      - checkout
-      - run: |
-          echo $GCP_KEY > gcloud-service-key.json
-          gcloud auth activate-service-account --key-file=gcloud-service-key.json
-          gcloud --quiet config set project ${GCP_PROJECT_ID}
-          gcloud --quiet config set compute/zone ${GCP_REGION}
+      - attach_workspace:
+          at: .
+      - run:
+          name: ls
+          command: ls -al
+      - run:
+          name: Setup gcloud env
+          command: |
+            echo $GCP_KEY > gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=gcloud-service-key.json
+            gcloud --quiet config set project ${GCP_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GCP_REGION}
+      - run:
+          name: Deploy to App Engine
+          command: gcloud app deploy
 
 workflows:
   version: 2
